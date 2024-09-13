@@ -280,8 +280,8 @@ export default function Home() {
                 Upload Image
               </h2>
               <p className="font-inter max-w-md pr-5 text-base text-gray-500">
-                Simply drag and drop your image into the box above, 
-                or click the 'Select Image to Upload' button to begin.
+              Simply drag and drop your image into the box above, 
+              or click the &#x27;Select Image to Upload&#x27; button to begin.
               </p>
             </div>
             {/* MOBILE - HOW IT WORKS LINE */}
@@ -323,7 +323,7 @@ export default function Home() {
                 Click the button"Extract Text" 
               </h2>
               <p className="font-inter max-w-md pr-5 text-base text-gray-500">
-              Next, click the 'Extract Text' button and wait patiently for the process to complete.
+              Next, click the &#x27;Extract Text&#x27; button and wait patiently for the process to complete.
               </p>
             </div>
             {/* MOBILE - HOW IT WORKS LINE */}
@@ -364,7 +364,7 @@ export default function Home() {
               <h2 className="mb-5 text-xl font-medium lg:mt-8">Done!</h2>
               <p className="font-inter max-w-md pr-5 text-base text-gray-500">
               Finally, the text box below will display the extracted text.
-              You can click the 'Copy Text' button to copy it.
+              You can click the &#x27;Copy Text&#x27; button to copy it.
               </p>
             </div>
           </div>

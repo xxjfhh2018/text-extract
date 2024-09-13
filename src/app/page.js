@@ -1,113 +1,380 @@
-import Image from "next/image";
+'use client';
+
+import Head from 'next/head';
+import Faq from '../components/faq';
+import { useState, useCallback, useRef } from 'react';
+import { useDropzone } from 'react-dropzone';
 
 export default function Home() {
+  const [imageUrl, setImageUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState(null);
+  const [extractedText, setExtractedText] = useState(null);
+  const textareaRef = useRef(null);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    handleImageUpload(acceptedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const handleClearImage = () => {
+    setImageUrl(null);
+    setUploadProgress(0);
+    setExtractedText(null);
+    setError(null);
+  };
+  const handleCopyText = () => {
+    if (textareaRef.current) {
+      textareaRef.current.select();
+      document.execCommand('copy');
+      // 可选：显示复制成功的提示
+      alert('Text copied to clipboard!');
+    }
+  };
+  //处理图片上传过程
+  const handleImageUpload = (file) => {
+    if (!file) return;
+
+    setIsUploading(true);
+    setError(null);
+    setUploadProgress(0);
+
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    xhr.open('POST', '/api/upload-image', true);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        setUploadProgress(percentComplete);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        setImageUrl(response.url);
+      } else {
+        setError('Upload failed: ' + xhr.statusText);
+      }
+      setIsUploading(false);
+    };
+
+    xhr.onerror = () => {
+      setError('Upload failed: Network error');
+      setIsUploading(false);
+    };
+
+    xhr.send(formData);
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+  };
+
+  //处理文本提取过程
+  const pollPredictionResult = async (predictionId) => {
+    const maxAttempts = 10;
+    const interval = 2000; // 2 seconds
+
+    for (let i = 0; i < maxAttempts; i++) {
+      const response = await fetch(`/api/predictions/${predictionId}`);
+      const data = await response.json();
+
+      if (data.status === 'succeeded') {
+        return data.output;
+      } else if (data.status === 'failed') {
+        throw new Error(data.error || 'Text extraction failed');
+      }
+
+      // Wait before next attempt
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
+
+    throw new Error('Prediction timed out');
+  };
+
+  //处理文本提取
+  const handleExtractText = async () => {
+    if (!imageUrl) {
+      setError('Please upload an image first');
+      return;
+    }
+
+    setIsExtracting(true);
+    setError(null);
+    setExtractedText(null);
+
+    try {
+      const response = await fetch('/api/predictions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image: imageUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Text extraction failed');
+      }
+
+      const data = await response.json();
+      
+      if (data.id) {
+        setExtractedText('Processing... Please wait.');
+        const result = await pollPredictionResult(data.id);
+        setExtractedText(result);
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (err) {
+      setError('Text extraction failed: ' + err.message);
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+    <Head>
+      <title>Accurate Text Extraction from Images in 2024 | Textract.tools</title>
+      <meta name="description" content="Textract.tools provides tools to extract text from images or OCR documents or images,Helps you convert images to text." />
+      <meta name="keyword"  content="text extraction" />
+    </Head>
+      
+      <section>
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">Image Upload and Text Extraction</h1>
+        
+        <div {...getRootProps()} className="mb-4">
+          <input {...getInputProps()} />
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer h-64 flex items-center justify-center">
+            {imageUrl ? (
+              <img src={imageUrl} alt="Uploaded" className="max-h-full max-w-full object-contain" />
+            ) : isDragActive ? (
+              <p>Drop the image here ...</p>
+            ) : (
+              <p>Drag and drop an image here, or click to select an image</p>
+            )}
+          </div>
+        </div>
+
+        <div className="mb-4 flex space-x-4">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileInputChange}
+            accept="image/*"
+            className="hidden"
+          />
+          <button
+            onClick={handleButtonClick}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            disabled={isUploading}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            Select Image to Upload
+          </button>
+          <button
+            onClick={handleExtractText}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            disabled={!imageUrl || isExtracting}
+          >
+            Extract Text
+          </button>
+          <button
+        onClick={handleClearImage}
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        disabled={!imageUrl || isUploading || isExtracting}
+      >
+        Clear Image
+        </button>
+        </div>
+
+        {isUploading && (
+          <div className="mb-4">
+            <div className="bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div 
+                className="bg-blue-600 h-2.5 rounded-full" 
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">
+              Uploading: {uploadProgress.toFixed(0)}%
+            </p>
+          </div>
+        )}
+
+        {isExtracting && (
+          <p className="text-blue-500 mb-4">Extracting text...</p>
+        )}
+
+
+        {error && (
+          <div className="text-red-500 mb-4">
+            {error}
+          </div>
+        )}
+
+        {extractedText && (
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold mb-2">Extracted Text:</h2>
+            <form className="flex flex-col items-center">
+              <div className="w-full mb-2">
+                <textarea
+                  ref={textareaRef}
+                  value={extractedText}
+                  readOnly
+                  className="w-full h-80 min-h-[10rem] p-2 border rounded-lg bg-yellow-100"
+                />
+              </div>
+              <div className="w-full flex justify-left">
+                <button
+                  type="button"
+                  onClick={handleCopyText}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Copy Text
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+      </section>
+      <section className="pb-12">
+      {/* Container */}
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center px-5 py-16 md:px-10 md:py-20">
+        {/* HEADING TEXT */}
+        <p className="font-inter mb-2 text-center text-sm font-medium">
+          3 EASY STEPS
+        </p>
+        <h2 className="text-center text-3xl font-bold lg:text-4xl">
+          How to extract text from images 
+        </h2>
+        <p className="font-inter mx-auto mb-12 mt-4 max-w-lg px-5 text-center text-base font-light text-gray-500">
+
+        It's a simple drag-and-drop, click, and copy process.
+        </p>
+        {/* HOW IT WORKS STEPS */}
+        <div className="flex flex-col items-start justify-center lg:flex-row">
+          {/* BLOCK */}
+          <div className="relative my-8 flex w-full rounded-md lg:mx-8 lg:flex-col">
+            <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
+              <h2 className="text-3xl font-medium">1</h2>
+            </div>
+            <div className="ml-6 lg:ml-0">
+              <h2 className="mb-5 text-xl font-medium lg:mt-8">
+                Upload Image
+              </h2>
+              <p className="font-inter max-w-md pr-5 text-base text-gray-500">
+                Simply drag and drop your image into the box above, 
+                or click the 'Select Image to Upload' button to begin.
+              </p>
+            </div>
+            {/* MOBILE - HOW IT WORKS LINE */}
+            <svg
+              className="absolute -bottom-[48px] left-[28px] lg:hidden"
+              width="12"
+              height="70"
+              viewBox="0 0 12 95"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 0.226497L0.226497 6L6 11.7735L11.7735 6L6 0.226497ZM6 94.7735L11.7735 89L6 83.2265L0.226497 89L6 94.7735ZM5 6V10.15H7V6H5ZM5 18.45V26.75H7L7 18.45H5ZM5 35.05L5 43.35H7V35.05H5ZM5 51.65L5 59.95H7L7 51.65H5ZM5 68.25L5 76.55H7L7 68.25H5ZM5 84.85L5 89H7V84.85H5Z"
+                fill="black"
+              ></path>
+            </svg>
+            {/* DESKTOP - HOW IT WORKS LINE */}
+            <svg
+              className="absolute right-0 top-7 hidden lg:block"
+              width="170"
+              height="12"
+              viewBox="0 0 170 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.226497 6L6 11.7735L11.7735 6L6 0.226497L0.226497 6ZM169.773 6L164 0.226497L158.227 6L164 11.7735L169.773 6ZM6 7H9.95V5H6V7ZM17.85 7H25.75V5H17.85V7ZM33.65 7H41.55V5H33.65V7ZM49.45 7H57.35V5H49.45V7ZM65.25 7H73.15V5H65.25V7ZM81.05 7H88.95V5H81.05V7ZM96.85 7H104.75V5H96.85V7ZM112.65 7H120.55V5H112.65V7ZM128.45 7H136.35V5H128.45V7ZM144.25 7H152.15V5H144.25V7ZM160.05 7H164V5H160.05V7Z"
+                fill="black"
+              />
+            </svg>
+          </div>
+          {/* BLOCK */}
+          <div className="relative my-8 flex w-full rounded-md lg:mx-8 lg:flex-col">
+            <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
+              <h2 className="text-3xl font-medium">2</h2>
+            </div>
+            <div className="ml-6 lg:ml-0">
+              <h2 className="mb-5 text-xl font-medium lg:mt-8">
+                Click the button"Extract Text" 
+              </h2>
+              <p className="font-inter max-w-md pr-5 text-base text-gray-500">
+              Next, click the 'Extract Text' button and wait patiently for the process to complete.
+              </p>
+            </div>
+            {/* MOBILE - HOW IT WORKS LINE */}
+            <svg
+              className="absolute -bottom-[48px] left-[28px] lg:hidden"
+              width="12"
+              height="70"
+              viewBox="0 0 12 95"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 0.226497L0.226497 6L6 11.7735L11.7735 6L6 0.226497ZM6 94.7735L11.7735 89L6 83.2265L0.226497 89L6 94.7735ZM5 6V10.15H7V6H5ZM5 18.45V26.75H7L7 18.45H5ZM5 35.05L5 43.35H7V35.05H5ZM5 51.65L5 59.95H7L7 51.65H5ZM5 68.25L5 76.55H7L7 68.25H5ZM5 84.85L5 89H7V84.85H5Z"
+                fill="black"
+              ></path>
+            </svg>
+            {/* DESKTOP - HOW IT WORKS LINE */}
+            <svg
+              className="absolute right-0 top-7 hidden lg:block"
+              width="170"
+              height="12"
+              viewBox="0 0 170 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.226497 6L6 11.7735L11.7735 6L6 0.226497L0.226497 6ZM169.773 6L164 0.226497L158.227 6L164 11.7735L169.773 6ZM6 7H9.95V5H6V7ZM17.85 7H25.75V5H17.85V7ZM33.65 7H41.55V5H33.65V7ZM49.45 7H57.35V5H49.45V7ZM65.25 7H73.15V5H65.25V7ZM81.05 7H88.95V5H81.05V7ZM96.85 7H104.75V5H96.85V7ZM112.65 7H120.55V5H112.65V7ZM128.45 7H136.35V5H128.45V7ZM144.25 7H152.15V5H144.25V7ZM160.05 7H164V5H160.05V7Z"
+                fill="black"
+              />
+            </svg>
+          </div>
+          {/* BLOCK */}
+          <div className="relative my-8 flex w-full rounded-md lg:mx-8 lg:flex-col">
+            <div className="flex h-16 w-16 items-center justify-center rounded-md bg-gray-200">
+              <h2 className="text-3xl font-medium">3</h2>
+            </div>
+            <div className="ml-6 lg:ml-0">
+              <h2 className="mb-5 text-xl font-medium lg:mt-8">Done!</h2>
+              <p className="font-inter max-w-md pr-5 text-base text-gray-500">
+              Finally, the text box below will display the extracted text.
+              You can click the 'Copy Text' button to copy it.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      </section>
+      <section>
+        <Faq />
+      </section>
+      
+    </>
   );
 }

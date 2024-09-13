@@ -11,13 +11,12 @@ export default function About() {
                     <h2 className="mb-8 text-3xl font-bold md:text-5xl">About us</h2>
                     <p className="text-sm sm:text-base">
 
-                    Welcome to Textract.tools, your go-to platform for accurate and 
-                    efficient text extraction from images. Since our inception, we&#x26;apos;ve 
-                    been committed to leveraging the latest OCR technology to provide 
-                    businesses and individuals with a seamless solution for converting 
-                    images into editable text. Our user-friendly platform ensures high 
-                    accuracy and speed, whether you&#x27;re working with scanned documents, 
-                    photos, or complex image formats.
+                    Welcome to Textract.tools, your go-to platform for accurate and efficient text 
+                    extraction from images. Since our inception, we&amp;apos;ve been committed to 
+                    leveraging the latest OCR technology to provide businesses and individuals with
+                    a seamless solution for converting images into editable text. Our user-friendly
+                    platform ensures high accuracy and speed, whether you&apos;re working with
+                    scanned documents, photos, or complex image formats.
                     </p>
                     <a
                     href="#"
@@ -30,10 +29,9 @@ export default function About() {
                     <div className="grid gap-8 md:grid-cols-2 md:gap-4">
                     <div className="flex flex-col gap-4 rounded-md border border-solid bg-gray-100 p-6 md:p-4">
                         <p className="text-sm">
-                        Textract.tools has completely transformed the way I handle 
-                        image-based documents. The accuracy is spot on, and the process
-                        is incredibly fast. It&#x27;s become an essential tool for 
-                        my day-to-day tasks!
+                        Textract.tools has completely transformed the way I handle image-based documents. 
+                        The accuracy is spot on, and the process is incredibly fast. It&apos;s 
+                        become an essential tool for my day-to-day tasks!
                         </p>
                         <div className="flex items-center gap-2 sm:gap-x-4">
                         <div className="flex items-center gap-x-2">

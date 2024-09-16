@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 const Footer = () => {
   return (
@@ -8,8 +9,10 @@ const Footer = () => {
         {/* Component */}
         <div className="flex-col flex items-center">
           <a href="#" className="mb-8 inline-block max-w-full text-black">
-            <img
+            <Image
               src="/dlogo.png"
+              width={150}
+              height={150}
               alt=""
               className="inline-block"
             />
@@ -52,9 +55,11 @@ const Footer = () => {
               href="#"
               className="mx-auto flex-col flex max-w-6 items-center justify-center text-black"
             >
-              <img
+              <Image
                 src="https://assets.website-files.com/6458c625291a94a195e6cf3a/6458c625291a945b4ae6cf7b_Vector-1.svg"
-                alt=""
+                alt="facebook"
+                width={24}
+                height={24}
                 className="inline-block"
               />
             </a>
@@ -62,9 +67,11 @@ const Footer = () => {
               href="#"
               className="mx-auto flex-col flex max-w-6 items-center justify-center text-black"
             >
-              <img
+              <Image
                 src="https://assets.website-files.com/6458c625291a94a195e6cf3a/6458c625291a945560e6cf77_Vector.svg"
                 alt=""
+                width={24}
+                height={24}
                 className="inline-block"
               />
             </a>
@@ -75,6 +82,8 @@ const Footer = () => {
               <img
                 src="https://assets.website-files.com/6458c625291a94a195e6cf3a/6458c625291a940535e6cf7a_Vector-3.svg"
                 alt=""
+                width={24}
+                height={24}
                 className="inline-block"
               />
             </a>

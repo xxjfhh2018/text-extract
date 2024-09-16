@@ -12,10 +12,10 @@ export default function About() {
                     <p className="text-sm sm:text-base">
 
                     Welcome to Textract.tools, your go-to platform for accurate and efficient text 
-                    extraction from images. Since our inception, we&amp;apos;ve been committed to 
+                    extraction from images. Since our inception, we've been committed to 
                     leveraging the latest OCR technology to provide businesses and individuals with
                     a seamless solution for converting images into editable text. Our user-friendly
-                    platform ensures high accuracy and speed, whether you&apos;re working with
+                    platform ensures high accuracy and speed, whether your working with
                     scanned documents, photos, or complex image formats.
                     </p>
                     <a
@@ -30,7 +30,7 @@ export default function About() {
                     <div className="flex flex-col gap-4 rounded-md border border-solid bg-gray-100 p-6 md:p-4">
                         <p className="text-sm">
                         Textract.tools has completely transformed the way I handle image-based documents. 
-                        The accuracy is spot on, and the process is incredibly fast. It&apos;s 
+                        The accuracy is spot on, and the process is incredibly fast. It's 
                         become an essential tool for my day-to-day tasks!
                         </p>
                         <div className="flex items-center gap-2 sm:gap-x-4">

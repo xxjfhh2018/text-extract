@@ -37,10 +37,10 @@ const Footer = () => {
               Works
             </a>
             <a
-              href="#"
+              href="/contact"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
-              Support
+              Contact
             </a>
             <a
               href="#"

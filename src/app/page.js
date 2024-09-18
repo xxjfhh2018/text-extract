@@ -57,17 +57,113 @@ export default function Home() {
     };
 
     xhr.onload = () => {
-      if (xhr.status === 200) {
+      try {
         const response = JSON.parse(xhr.responseText);
-        setImageUrl(response.url);
-      } else {
-        setError('Upload failed: ' + xhr.statusText);
+        if (xhr.status === 200) {
+          setImageUrl(response.url);
+        } else {
+          // 处理错误响应
+          const errorMessage = response.error || 'Upload failed';
+          const errorDetails = response.details || '';
+          console.error(`Upload error:\n${errorMessage}\n${errorDetails}`);
+          setError('Upload failed'); // 设置一个简单的英文错误消息用于 UI 显示
+        }
+      } catch (e) {
+        // 处理 JSON 解析错误
+        console.error('Upload failed: Unable to parse server response', e);
+        setError('Upload failed');
+      }
+      setIsUploading(false);
+    };
+    
+    xhr.onerror = () => {
+      console.error('Upload failed: Network error');
+      setError('Upload failed');
+      setIsUploading(false);
+    };
+
+    xhr.send(formData);
+  };
+
+  const handleButtonClick = () => {
+'use client';
+
+import Head from 'next/head';
+import Faq from '../components/faq';
+import { useState, useCallback, useRef } from 'react';
+import { useDropzone } from 'react-dropzone';
+
+export default function Home() {
+  const [imageUrl, setImageUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [error, setError] = useState(null);
+  const [extractedText, setExtractedText] = useState(null);
+  const textareaRef = useRef(null);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    handleImageUpload(acceptedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const handleClearImage = () => {
+    setImageUrl(null);
+    setUploadProgress(0);
+    setExtractedText(null);
+    setError(null);
+  };
+  const handleCopyText = () => {
+    if (textareaRef.current) {
+      textareaRef.current.select();
+      document.execCommand('copy');
+      // 可选：显示复制成功的提示
+      alert('Text copied to clipboard!');
+    }
+  };
+  //处理图片上传过程
+  const handleImageUpload = (file) => {
+    if (!file) return;
+
+    setIsUploading(true);
+    setError(null);
+    setUploadProgress(0);
+
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    xhr.open('POST', '/api/upload-image', true);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        setUploadProgress(percentComplete);
+      }
+    };
+
+    xhr.onload = () => {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        if (xhr.status === 200) {
+          setImageUrl(response.url);
+        } else {
+          // 处理错误响应
+          const errorMessage = response.error || 'upload error';
+          const errorDetails = response.details || '';
+          setError(`${errorMessage}\n${errorDetails}`);
+        }
+      } catch (e) {
+        // 处理 JSON 解析错误
+        setError('上传失败: 无法解析服务器响应');
       }
       setIsUploading(false);
     };
 
     xhr.onerror = () => {
-      setError('Upload failed: Network error');
+      setError('上传失败: 网络错误');
       setIsUploading(false);
     };
 
@@ -224,7 +320,8 @@ export default function Home() {
 
         {error && (
           <div className="text-red-500 mb-4">
-            {error}
+            <p className="font-bold">上传错误:</p>
+            <pre className="whitespace-pre-wrap">{error}</pre>
           </div>
         )}
 

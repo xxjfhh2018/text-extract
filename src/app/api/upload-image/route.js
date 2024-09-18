@@ -40,6 +40,22 @@ export async function POST(request) {
     return new Response(JSON.stringify({ url: publicUrl }), { status: 200 });
   } catch (error) {
     console.error('上传失败:', error);
-    return new Response(JSON.stringify({ error: '文件上传失败' }), { status: 500 });
+    
+    // 获取更详细的错误信息
+    let errorMessage = '文件上传失败';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    // 返回详细的错误信息
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      details: error.toString()
+    }), { 
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 }

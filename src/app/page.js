@@ -1,6 +1,5 @@
 'use client';
 
-import Head from 'next/head';
 import Faq from '../components/faq';
 import { useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -183,11 +182,7 @@ export default function Home() {
 
   return (
     <>
-    <Head>
-      <title>Accurate Text Extraction from Images in 2024 | Textract.tools</title>
-      <meta name="description" content="Textract.tools provides tools to extract text from images or OCR documents or images,Helps you convert images to text." />
-      <meta name="keyword"  content="text extraction" />
-    </Head>
+
       
       <section>
       <div className="container mx-auto p-4">

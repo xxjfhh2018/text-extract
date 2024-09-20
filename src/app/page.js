@@ -1,5 +1,4 @@
 'use client';
-
 import Faq from '../components/faq';
 import { useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -97,6 +96,7 @@ export default function Home() {
 
   //处理文本提取过程
   const pollPredictionResult = async (predictionId) => {
+    console.log('Debug: Starting prediction result polling');
     console.log('Debug: Polling prediction result for:', predictionId);
     const maxAttempts = 10;
     const interval = 2000; // 2 seconds
@@ -181,9 +181,7 @@ export default function Home() {
   };
 
   return (
-    <>
-
-      
+    <>      
       <section>
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Image Upload and Text Extraction</h1>

@@ -1,4 +1,9 @@
 import React from 'react';
+export const metadata = {
+  title: 'About Us',
+  description: 'Learn more about Textract.tools and our mission to provide the best text extraction tools.',
+  keywords: '',
+};
 export default function About() {
     return (
         <section>

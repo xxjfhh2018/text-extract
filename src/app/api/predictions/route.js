@@ -14,11 +14,10 @@ const WEBHOOK_HOST = process.env.VERCEL_URL
   : process.env.NGROK_HOST;
 // 定义POST请求处理函数，作为默认输出函数
 export async function POST(request) {
-  try {
-    console.log('Received request in /api/predictions');
-    
+  console.log('Debug: Received POST request to /api/predictions');
+  try {    
     const body = await request.json();
-    console.log('Request body:', body);
+    console.log('Debug: Request body:', body);
 
     const { image } = body;
     console.log('Extracted image URL:', image);
@@ -39,10 +38,11 @@ export async function POST(request) {
       input: { image }
     });
 
-    console.log('Prediction result:', prediction);
+    console.log('Debug: Prediction result:', prediction);
     return NextResponse.json(prediction);
   } catch (error) {
-    console.error('Error in POST /api/predictions:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Detailed error:', error);
+    console.error('Stack trace:', error.stack);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

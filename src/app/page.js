@@ -98,6 +98,7 @@ export default function Home() {
 
   //处理文本提取过程
   const pollPredictionResult = async (predictionId) => {
+    console.log('Debug: Polling prediction result for:', predictionId);
     const maxAttempts = 10;
     const interval = 2000; // 2 seconds
 
@@ -137,6 +138,28 @@ export default function Home() {
         },
         body: JSON.stringify({ image: imageUrl }),
       });
+      // 添加详细的调试信息
+      console.log('API Response Status:', response.status);
+      console.log('API 响应状态文本:', response.statusText);
+      console.log('API 响应头:', Object.fromEntries(response.headers.entries()));
+
+      // 克隆响应以便我们可以同时读取正文和检查状态
+      const responseClone = response.clone();
+
+      try {
+        const responseBody = await responseClone.text();
+        console.log('API 响应体:', responseBody);
+        
+        // 尝试解析 JSON
+        try {
+          const jsonBody = JSON.parse(responseBody);
+          console.log('API 响应体 (JSON):', jsonBody);
+        } catch (jsonError) {
+          console.log('响应体不是有效的 JSON');
+        }
+      } catch (error) {
+        console.error('读取响应体时出错:', error);
+      }
 
       if (!response.ok) {
         throw new Error('Text extraction failed');

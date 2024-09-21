@@ -21,16 +21,17 @@ export async function POST(request) {
 
     // 原有的预测创建逻辑
     const { image } = body;
-    console.log('提取的图片 URL:', image);
+    console.log('Provid image URL:', image);
 
     if (!image) {
-      console.error('请求中未提供图片 URL');
-      return NextResponse.json({ error: '未提供图片 URL' }, { status: 400 });
+      console.error('Please provide image URL');
+      return NextResponse.json({ error: 'Need image URL' }, { status: 400 });
     }
 
+
     if (!process.env.REPLICATE_API_TOKEN) {
-      console.error('REPLICATE_API_TOKEN 未设置');
-      throw new Error('REPLICATE_API_TOKEN 未设置');
+      console.error('Need REPLICATE_API_TOKEN');
+      throw new Error('need REPLICATE_API_TOKEN');
     }
 
     console.log('使用 Replicate API 创建预测...');
@@ -41,8 +42,8 @@ export async function POST(request) {
       webhook_events_filter: ["completed"]
     });
 
-    console.log('Debug: 预测结果到服务端日志:', prediction);
-    return NextResponse.json({ message: "预测已开始-到浏览器", id: prediction.id });
+    console.log('Debug: prediction to server:', prediction);
+    return NextResponse.json({ message: "Prediction to browser", id: prediction.id });
   } catch (error) {
     console.error('详细错误:', error);
     console.error('堆栈跟踪:', error.stack);
@@ -56,7 +57,7 @@ async function handleWebhook(body) {
 
   switch (body.status) {
     case 'succeeded':
-      console.log('预测成功，结果:', body.output);
+      console.log('Success, Result:', body.output);
       // 这里可以添加将结果保存到数据库或发送通知等逻辑
       break;
     case 'failed':

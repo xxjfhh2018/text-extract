@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { useState } from 'react';
+
 export const metadata = {
   title: 'Contact Us',
   description: 'Contact Textract.tools for any inquiries or assistance with text extraction tools.',
@@ -8,11 +8,7 @@ export const metadata = {
 };
 //函数组件
 export default function Contact() {  //括号里可以接受props
-  const [checked, setChecked] = useState(false);
 
-  const handleChange = () => {
-    setChecked(!checked);
-  };
   //返回一个jsx 即React元素
   return (
 <section>

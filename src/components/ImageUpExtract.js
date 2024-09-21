@@ -101,7 +101,6 @@ export default function ImageUpExtract() {
 
   //处理文本提取过程
   const pollPredictionResult = async (predictionId) => {
-    console.log('Debug: Starting prediction result polling');
     console.log('Debug: Polling prediction result for:', predictionId);
     const maxAttempts = 5;
     const interval = 2000; // 2 seconds
@@ -109,7 +108,7 @@ export default function ImageUpExtract() {
     for (let i = 0; i < maxAttempts; i++) {
       const response = await fetch(`/api/predictions/${predictionId}`);
       const data = await response.json();
-
+      console.log('Debug: resonse:', data);
       if (data.status === 'succeeded') {
         return data.output;
       } else if (data.status === 'failed') {

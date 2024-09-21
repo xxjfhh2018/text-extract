@@ -103,7 +103,7 @@ export default function ImageUpExtract() {
   const pollPredictionResult = async (predictionId) => {
     console.log('Debug: Starting prediction result polling');
     console.log('Debug: Polling prediction result for:', predictionId);
-    const maxAttempts = 10;
+    const maxAttempts = 5;
     const interval = 2000; // 2 seconds
 
     for (let i = 0; i < maxAttempts; i++) {
@@ -135,6 +135,8 @@ export default function ImageUpExtract() {
     setExtractedText(null);
 
     try {
+      // fetch 返回一个promise 对象 
+      // 使用await 等待promise 对象完成
       const response = await fetch('/api/predictions', {
         method: 'POST',
         headers: {

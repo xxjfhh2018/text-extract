@@ -41,8 +41,8 @@ export async function POST(request) {
       webhook_events_filter: ["completed"]
     });
 
-    console.log('Debug: 预测结果:', prediction);
-    return NextResponse.json({ message: "预测已开始", id: prediction.id });
+    console.log('Debug: 预测结果到服务端日志:', prediction);
+    return NextResponse.json({ message: "预测已开始-到浏览器", id: prediction.id });
   } catch (error) {
     console.error('详细错误:', error);
     console.error('堆栈跟踪:', error.stack);

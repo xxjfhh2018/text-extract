@@ -3,7 +3,14 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 const inter = Inter({ subsets: ["latin"] });
-import { GoogleAnalytics } from '@next/third-parties/google'
+
+import { useEffect } from 'react';
+import Script from 'next/script';
+import { usePathname } from 'next/navigation'; // 使用新版的 usePathname 钩子监听路由变化
+
+const GA_TRACKING_ID = 'G-X5RR5RRQB2'; // 替换为你的 Google Analytics 跟踪 ID
+
+
 
 export const metadata = {
   title: {
@@ -15,12 +22,39 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.gtag('config', GA_TRACKING_ID, {
+        page_path: pathname,
+      });
+    }
+  }, [pathname]);
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <GoogleAnalytics gaId="G-X5RR5RRQB2" />
+           <head>
+        {/* Google Analytics Script */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+                <link rel="icon" href="/favicon.ico" />
       </head>
+
       <body className={inter.className}>
         <Header />
         <main>{children}</main>

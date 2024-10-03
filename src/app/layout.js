@@ -19,14 +19,15 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
-
+        <GoogleAnalytics gaId="G-X5RR5RRQB2" />
       </head>
       <body className={inter.className}>
         <Header />
         <main>{children}</main>
         <Footer />
+
       </body>
-      <GoogleAnalytics gaId="G-X5RR5RRQB2" />
+      
     </html>
   );
 }

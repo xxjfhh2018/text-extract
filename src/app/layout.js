@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 import { usePathname } from 'next/navigation'; // 使用新版的 usePathname 钩子监听路由变化
+import { GoogleTagManager } from '@next/third-parties/google'
 
 export const metadata = {
   title: {
@@ -19,7 +20,8 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-           <head>
+      <GoogleTagManager gtmId="G-X5RR5RRQB2" />
+      <head>
 
                 <link rel="icon" href="/favicon.ico" />
       </head>

@@ -20,10 +20,9 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      
+      <GoogleTagManager gtmId="G-X5RR5RRQB2" />
       <head>
         <link rel="icon" href="/favicon.ico" />
-        <GoogleTagManager gtmId="G-X5RR5RRQB2" />
       </head>
 
       <body className={inter.className}>

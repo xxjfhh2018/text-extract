@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 import { usePathname } from 'next/navigation'; // 使用新版的 usePathname 钩子监听路由变化
+import GoogleAnalytics from '../components/GoogleAnalytics.js';
 
 export const metadata = {
   title: {

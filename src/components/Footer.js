@@ -20,31 +20,31 @@ const Footer = () => {
           </a>
           <div className="text-center font-semibold">
             <a
-              href="/about"
+              href="/info/about"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
               About
             </a>
             <a
-              href="#"
+              href="/info/features"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
               Features
             </a>
             <a
-              href="#"
+              href="/info/terms"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
-              Works
+              Terms
             </a>
             <a
-              href="/contact"
+              href="/info/contact"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
               Contact
             </a>
             <a
-              href="#"
+              href="/info/help"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
               Help

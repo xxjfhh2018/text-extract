@@ -9,15 +9,11 @@ export const metadata = {
   export default function TermsOfServicePage() {
 	return (
 		<section>
-		<div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-5 py-16 md:px-10 md:py-20">
 			<div>
-				<h1 className="text-3xl lg:text-4xl font-bold text-black px-5 py-16 md:px-10 md:py-20 items-center">Terms of Service</h1>
 				<p>These terms and conditions outline the rules and regulations for the use of Textract.tools, the online tool for extracting text from images and documents.</p>
 				
-				<h2>1. Terms</h2>
 				<p>By accessing this website, we assume you accept these terms and conditions in full. Do not continue to use the website if you do not accept all of the terms and conditions stated on this page.</p>
 				
-				<h2>2. License</h2>
 				<p>Unless otherwise stated, Textract.tools and/or its licensors own the intellectual property rights for all material on this website. All intellectual property rights are reserved. You may access this from Textract.tools for your personal use, subject to restrictions set in these terms and conditions.</p>
 				
 				<h2 className="text-2xl font-bold text-black py-6">3. User Responsibilities</h2>

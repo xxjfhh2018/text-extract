@@ -1,4 +1,4 @@
-import ContactForm from '../../../components/ContactForm';
+import ContactForm from '@/components/ContactForm'; // 使用根目录的方法
 export const metadata = {
   title: 'Contact Us',
   description: 'Contact Textract.tools for any inquiries or assistance with text extraction tools.',

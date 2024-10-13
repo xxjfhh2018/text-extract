@@ -1,18 +1,15 @@
-"use client"
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+'use client'
+import React from 'react';
+import { useState } from 'react';
 
 export default function PrivacyOfServicePage() {
     const [isVisible, setIsVisible] = useState(true); 
-    const router = useRouter(); // 获取路由对象
     const handleDeny = () => {
         setIsVisible(false); // 设置 isVisible 为 false
-        router.push('/'); // 导航到主页
     };
 
     const handleAccept = () => {
         setIsVisible(false); // 设置 isVisible 为 false
-        router.push('/'); // 导航到主页
     };
     if (!isVisible) return null; 
 	return (
@@ -20,7 +17,7 @@ export default function PrivacyOfServicePage() {
 			<div className="bg-white w-full shadow-lg px-6 py-10 relative max-w-3xl">
 				{/* Close Button */}
 				<button
-					onClick={handleClose}
+					onClick={handleAccept}
 					className="absolute top-3 right-3 text-gray-800 hover:text-gray-600"
 				>
 					<svg
@@ -67,5 +64,5 @@ export default function PrivacyOfServicePage() {
 			</div>
 		</section>
 	);
-  }
+}
   

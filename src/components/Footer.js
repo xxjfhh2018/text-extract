@@ -35,7 +35,7 @@ const Footer = () => {
               href="/info/terms"
               className="inline-block px-6 py-2 font-normal text-black transition hover:text-blue-600"
             >
-              Terms
+              Services
             </a>
             <a
               href="/info/contact"

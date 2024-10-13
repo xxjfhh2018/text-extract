@@ -11,7 +11,7 @@ export const metadata = {
 		<section>
 		<div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-5 py-16 md:px-10 md:py-20">
 			<div>
-				<h1 className="text-3xl lg:text-4xl font-bold text-black px-5 py-16 md:px-10 md:py-20">Terms of Service</h1>
+				<h1 className="text-3xl lg:text-4xl font-bold text-black px-5 py-16 md:px-10 md:py-20 items-center">Terms of Service</h1>
 				<p>These terms and conditions outline the rules and regulations for the use of Textract.tools, the online tool for extracting text from images and documents.</p>
 				
 				<h2>1. Terms</h2>

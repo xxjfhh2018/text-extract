@@ -18,7 +18,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-
+  const google_tag = `${process.env.GOOGLE_ANLYTICS_ID}`;
   return (
     <html lang="en">
       
@@ -27,6 +27,8 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className={inter.className}>
+        {/* 添加 Google Analytics 客户端组件 */}
+        <GoogleAnalytics trackingId="google_tag" />
         <Header />
         <main>{children}</main>
         <Footer />

@@ -24,11 +24,11 @@ export default function RootLayout({ children }) {
 
       <body className={inter.className}>
         {/* 添加 Google Analytics 客户端组件 */}
-        <GoogleAnalytics trackingId="google_tag" />
+        
         <Header />
         <main>{children}</main>
         <Footer />
-
+        <GoogleAnalytics trackingId={google_tag} />
       </body>
       
     </html>

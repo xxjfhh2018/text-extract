@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const google_tag = `${process.env.GOOGLE_ANLYTICS_ID}`;
+  const google_tag = `${process.env.GOOGLE_ANALYTICS_ID}`;
   return (
     <html lang="en">
       
